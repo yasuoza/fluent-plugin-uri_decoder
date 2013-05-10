@@ -1,4 +1,4 @@
-# Fluent::Plugin::UriDecoder
+# Fluent::Plugin::URIDecoder
 
 Fluent plugin to decode uri encoded value.
 
@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-```xml
+```
 <match input.**>
   type uri_decode
   key_name query_param
