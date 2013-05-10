@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'fluent/plugin/uri_decoder'
+require 'fluent/plugin/out_uri_decode'
 
 class Fluent::URIDecorderTest < MiniTest::Unit::TestCase
   CONFIG0 = %[
@@ -88,5 +88,26 @@ class Fluent::URIDecorderTest < MiniTest::Unit::TestCase
     assert_equal time,  emits[0][1]
     assert_equal '#hash', emits[0][2]['encoded']
     assert_equal '#another_hash', emits[0][2]['another_encoded']
+  end
+
+  def test_multiple_emit
+    d = create_driver(CONFIG2, 'encoded.message')
+    time = Time.now.to_i
+    d.run do
+      d.emit({'encoded' => '%23hash', 'another_encoded' => '%23another_hash'}, time)
+    end
+
+    emits = d.emits
+    emits << d.emits.flatten
+    assert_equal 2, emits.size
+    assert_equal 'decoded.message', emits[0][0]
+    assert_equal time,  emits[0][1]
+    assert_equal '#hash', emits[0][2]['encoded']
+    assert_equal '#another_hash', emits[0][2]['another_encoded']
+
+    assert_equal 'decoded.message', emits[1][0]
+    assert_equal time,  emits[1][1]
+    assert_equal '#hash', emits[1][2]['encoded']
+    assert_equal '#another_hash', emits[1][2]['another_encoded']
   end
 end
