@@ -1,4 +1,4 @@
-# Fluent::Plugin::URIDecoder
+# fluent-plugin-uri_decoder
 
 Fluent plugin to decode uri encoded value.
 
