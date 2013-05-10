@@ -15,6 +15,14 @@ class Fluent::URIDecorderTest < MiniTest::Unit::TestCase
     add_prefix decoded
   ]
 
+  CONFIG2 = %[
+    type uri_decode
+    key_names encoded, another_encoded
+    remove_prefix encoded
+    add_prefix decoded
+  ]
+
+
   def create_driver(conf=CONFIG0, tag='test')
     Fluent::Test::OutputTestDriver.new(Fluent::URIDecoder, tag).configure(conf)
   end
@@ -65,5 +73,20 @@ class Fluent::URIDecorderTest < MiniTest::Unit::TestCase
     assert_equal 'decoded.message', emits[0][0]
     assert_equal time,  emits[0][1]
     assert_equal '#hash', emits[0][2]['encoded']
+  end
+
+  def test_emit_with_multi_key_names
+    d = create_driver(CONFIG2, 'encoded.message')
+    time = Time.now.to_i
+    d.run do
+      d.emit({'encoded' => '%23hash', 'another_encoded' => '%23another_hash'}, time)
+    end
+
+    emits = d.emits
+    assert_equal 1, emits.size
+    assert_equal 'decoded.message', emits[0][0]
+    assert_equal time,  emits[0][1]
+    assert_equal '#hash', emits[0][2]['encoded']
+    assert_equal '#another_hash', emits[0][2]['another_encoded']
   end
 end

@@ -18,6 +18,8 @@ Or install it yourself as:
 
 ## Usage
 
+Specify decode target with `key_name`:
+
 ```
 <match input.**>
   type uri_decode
@@ -28,6 +30,17 @@ Or install it yourself as:
 ```
 
 This re-emits `decoded.**` tagged message with uri decoded.
+
+If you have multiple decode target, use `key_names` with comma separated:
+
+```
+<match input.**>
+  type uri_decode
+  key_names first_query_param, second_query_param
+  remove_prefix input
+  add_prefix decoded
+</match>
+```
 
 ## Contributing
 

@@ -4,7 +4,8 @@ class Fluent::URIDecoder < Fluent::Output
   config_param :tag, :string, :default => nil
   config_param :remove_prefix, :string, :default => nil
   config_param :add_prefix, :string, :default => nil
-  config_param :key_name, :string
+  config_param :key_name, :string, :default => nil
+  config_param :key_names, :string, :default => ''
 
   def initialize
     super
@@ -52,8 +53,15 @@ class Fluent::URIDecoder < Fluent::Output
   def emit(tag, es, chain)
     tag = tag_mangle(tag)
 
+    if @key_names
+      @key_names = @key_names.split(/,\s*/)
+    end
+    @key_names << @key_name if @key_name
+
     es.each do |time, record|
-      record[@key_name] = URI.decode(record[@key_name] || '').gsub(/"/, "'")
+      @key_names.each do |key_name|
+        record[key_name] = URI.decode(record[key_name] || '').gsub(/"/, "'")
+      end
 
       Fluent::Engine.emit(tag, time, record)
     end
