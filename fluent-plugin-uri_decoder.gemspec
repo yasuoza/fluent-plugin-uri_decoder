@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.version       = "0.1.0"
   spec.authors       = ["Yasuharu Ozaki"]
   spec.email         = ["yasuharu.ozaki@gmail.com"]
-  spec.description   = %q{Fluent plugin to decode uri encoded value.}
+  spec.description   = %q{Fluent plugin to decode uri encoded value. See more https://github.com/YasuOza/fluent-plugin-uri_decoder}
   spec.summary       = %q{Fluent plugin to decode uri encoded value.}
   spec.homepage      = "https://github.com/YasuOza/fluent-plugin-uri_decoder"
   spec.license       = "Apache 2.0"
