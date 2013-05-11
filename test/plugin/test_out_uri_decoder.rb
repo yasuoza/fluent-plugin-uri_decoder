@@ -35,6 +35,9 @@ class Fluent::URIDecorderTest < MiniTest::Unit::TestCase
     d = create_driver(CONFIG1)
     assert_equal 'encoded', d.instance.remove_prefix
     assert_equal 'decoded', d.instance.add_prefix
+
+    d = create_driver(CONFIG2)
+    assert_equal 'encoded, another_encoded', d.instance.key_names
   end
 
   def test_tag_mangle

@@ -53,15 +53,12 @@ class Fluent::URIDecoder < Fluent::Output
   def emit(tag, es, chain)
     tag = tag_mangle(tag)
 
-    # After first emit, @key_names will be array of given key names.
-    # Escape [].split, ensure @key_names to be an instance of String.
-    if @key_names.kind_of?(String)
-      @key_names = @key_names.split(/,\s*/)
-    end
-    @key_names << @key_name if @key_name
+    @_key_names ||= @key_names.split(/,\s*/)
+    @_key_names << @key_name if @key_name
+    @_key_names.uniq!
 
     es.each do |time, record|
-      @key_names.each do |key_name|
+      @_key_names.each do |key_name|
         record[key_name] = URI.decode(record[key_name] || '').gsub(/"/, "'")
       end
 
