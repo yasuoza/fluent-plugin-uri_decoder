@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "fluent-plugin-uri_decoder"
-  spec.version       = "0.1.2"
+  spec.version       = "0.2.0"
   spec.authors       = ["Yasuharu Ozaki"]
   spec.email         = ["yasuharu.ozaki@gmail.com"]
   spec.description   = %q{Fluent plugin to decode uri encoded value. See more https://github.com/YasuOza/fluent-plugin-uri_decoder}
