@@ -1,4 +1,4 @@
-# fluent-plugin-uri_decoder
+# fluent-plugin-uri_decoder, a plugin for [Fluentd](http://fluentd.org)
 
 Fluent plugin to decode uri encoded value.
 
