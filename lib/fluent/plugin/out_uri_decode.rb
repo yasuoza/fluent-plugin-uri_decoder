@@ -62,7 +62,7 @@ class Fluent::URIDecoder < Fluent::Output
         record[key_name] = URI.decode(record[key_name] || '')
       end
 
-      Fluent::Engine.emit(tag, time, record)
+      router.emit(tag, time, record)
     end
 
     chain.next
