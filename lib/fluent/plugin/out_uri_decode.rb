@@ -59,7 +59,7 @@ class Fluent::URIDecoder < Fluent::Output
 
     es.each do |time, record|
       @_key_names.each do |key_name|
-        record[key_name] = URI.decode(record[key_name] || '')
+        record[key_name] = URI.decode_www_form_component(record[key_name] || '')
       end
 
       router.emit(tag, time, record)
