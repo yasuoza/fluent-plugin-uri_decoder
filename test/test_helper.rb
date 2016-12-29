@@ -8,7 +8,6 @@ rescue Bundler::BundlerError => e
   exit e.status_code
 end
 
-require 'minitest/unit'
 require 'fluent/test'
 
 unless ENV.has_key?('VERBOSE')

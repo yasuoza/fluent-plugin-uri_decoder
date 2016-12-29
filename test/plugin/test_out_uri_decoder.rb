@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'fluent/plugin/out_uri_decode'
 
-class Fluent::URIDecorderTest < MiniTest::Unit::TestCase
+class Fluent::URIDecorderTest < Test::Unit::TestCase
   CONFIG0 = %[
     type uri_decode
     key_name encoded
@@ -22,6 +22,9 @@ class Fluent::URIDecorderTest < MiniTest::Unit::TestCase
     add_prefix decoded
   ]
 
+  def setup
+    Fluent::Test.setup
+  end
 
   def create_driver(conf=CONFIG0, tag='test')
     Fluent::Test::OutputTestDriver.new(Fluent::URIDecoder, tag).configure(conf)
