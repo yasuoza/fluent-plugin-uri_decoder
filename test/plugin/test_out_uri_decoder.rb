@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'fluent/plugin/out_uri_decode'
 
-class Fluent::URIDecorderOutputTest < Test::Unit::TestCase
+class Fluent::URIDecoderOutputTest < Test::Unit::TestCase
   CONFIG0 = %[
     type uri_decode
     key_name encoded
