@@ -10,7 +10,7 @@ class Fluent::URIDecoderOutput < Fluent::Plugin::Output
   config_param :remove_prefix, :string, :default => nil
   config_param :add_prefix, :string, :default => nil
   config_param :key_name, :string, :default => nil
-  config_param :key_names, :string, :default => ''
+  config_param :key_names, :array, :default => []
 
   def configure(conf)
     super
@@ -28,6 +28,8 @@ class Fluent::URIDecoderOutput < Fluent::Plugin::Output
     if @add_prefix
       @added_prefix_string = @add_prefix + '.'
     end
+    @key_names << @key_name if @key_name
+    @key_names.uniq!
   end
 
   def tag_mangle(tag)
@@ -53,12 +55,8 @@ class Fluent::URIDecoderOutput < Fluent::Plugin::Output
   def process(tag, es)
     tag = tag_mangle(tag)
 
-    @_key_names ||= @key_names.split(/,\s*/)
-    @_key_names << @key_name if @key_name
-    @_key_names.uniq!
-
     es.each do |time, record|
-      @_key_names.each do |key_name|
+      @key_names.each do |key_name|
         record[key_name] = URI.decode_www_form_component(record[key_name] || '')
       end
 

@@ -40,7 +40,7 @@ class Fluent::URIDecorderOutputTest < Test::Unit::TestCase
     assert_equal 'decoded', d.instance.add_prefix
 
     d = create_driver(CONFIG2)
-    assert_equal 'encoded, another_encoded', d.instance.key_names
+    assert_equal ['encoded', 'another_encoded'], d.instance.key_names
   end
 
   def test_tag_mangle
