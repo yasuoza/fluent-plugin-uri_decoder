@@ -1,7 +1,7 @@
 require 'fluent/plugin/output'
 require 'uri'
 
-class Fluent::URIDecoder < Fluent::Plugin::Output
+class Fluent::URIDecoderOutput < Fluent::Plugin::Output
   Fluent::Plugin.register_output('uri_decode', self)
 
   helpers :event_emitter
