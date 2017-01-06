@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'fluent/plugin/out_uri_decode'
 
-class Fluent::URIDecorderTest < Test::Unit::TestCase
+class Fluent::URIDecoderOutputTest < Test::Unit::TestCase
   CONFIG0 = %[
     type uri_decode
     key_name encoded
@@ -26,8 +26,8 @@ class Fluent::URIDecorderTest < Test::Unit::TestCase
     Fluent::Test.setup
   end
 
-  def create_driver(conf=CONFIG0, tag='test')
-    Fluent::Test::OutputTestDriver.new(Fluent::URIDecoder, tag).configure(conf)
+  def create_driver(conf=CONFIG0)
+    Fluent::Test::Driver::Output.new(Fluent::Plugin::URIDecoderOutput).configure(conf)
   end
 
   def test_configure
@@ -40,7 +40,7 @@ class Fluent::URIDecorderTest < Test::Unit::TestCase
     assert_equal 'decoded', d.instance.add_prefix
 
     d = create_driver(CONFIG2)
-    assert_equal 'encoded, another_encoded', d.instance.key_names
+    assert_equal ['encoded', 'another_encoded'], d.instance.key_names
   end
 
   def test_tag_mangle
@@ -55,65 +55,65 @@ class Fluent::URIDecorderTest < Test::Unit::TestCase
 
   def test_emit_with_tag_specification
     d = create_driver(CONFIG0)
-    time = Time.now.to_i
-    d.run do
-      d.emit({'encoded' => '%23hash', 'value' => 1}, time)
+    time = event_time
+    d.run(default_tag: 'test') do
+      d.feed(time, {'encoded' => '%23hash', 'value' => 1})
     end
 
-    emits = d.emits
-    assert_equal 1, emits.size
-    assert_equal 'decoded', emits[0][0]
-    assert_equal time,  emits[0][1]
-    assert_equal '#hash', emits[0][2]['encoded']
+    events = d.events
+    assert_equal 1, events.size
+    assert_equal 'decoded', events[0][0]
+    assert_equal time,  events[0][1]
+    assert_equal '#hash', events[0][2]['encoded']
   end
 
   def test_emit_with_prefix_specification
-    d = create_driver(CONFIG1, 'encoded.message')
-    time = Time.now.to_i
-    d.run do
-      d.emit({'encoded' => '%23hash', 'value' => 1}, time)
+    d = create_driver(CONFIG1)
+    time = event_time
+    d.run(default_tag: 'encoded.message') do
+      d.feed(time, {'encoded' => '%23hash', 'value' => 1})
     end
 
-    emits = d.emits
-    assert_equal 1, emits.size
-    assert_equal 'decoded.message', emits[0][0]
-    assert_equal time,  emits[0][1]
-    assert_equal '#hash', emits[0][2]['encoded']
+    events = d.events
+    assert_equal 1, events.size
+    assert_equal 'decoded.message', events[0][0]
+    assert_equal time,  events[0][1]
+    assert_equal '#hash', events[0][2]['encoded']
   end
 
   def test_emit_with_multi_key_names
-    d = create_driver(CONFIG2, 'encoded.message')
-    time = Time.now.to_i
-    d.run do
-      d.emit({'encoded' => '%23hash', 'another_encoded' => '%23another_hash'}, time)
+    d = create_driver(CONFIG2)
+    time = event_time
+    d.run(default_tag: 'encoded.message') do
+      d.feed(time, {'encoded' => '%23hash', 'another_encoded' => '%23another_hash'})
     end
 
-    emits = d.emits
-    assert_equal 1, emits.size
-    assert_equal 'decoded.message', emits[0][0]
-    assert_equal time,  emits[0][1]
-    assert_equal '#hash', emits[0][2]['encoded']
-    assert_equal '#another_hash', emits[0][2]['another_encoded']
+    events = d.events
+    assert_equal 1, events.size
+    assert_equal 'decoded.message', events[0][0]
+    assert_equal time,  events[0][1]
+    assert_equal '#hash', events[0][2]['encoded']
+    assert_equal '#another_hash', events[0][2]['another_encoded']
   end
 
   def test_multiple_emit
-    d = create_driver(CONFIG2, 'encoded.message')
-    time = Time.now.to_i
-    d.run do
-      d.emit({'encoded' => '%23hash', 'another_encoded' => '%23another_hash'}, time)
+    d = create_driver(CONFIG2)
+    time = event_time
+    d.run(default_tag: 'encoded.message') do
+      d.feed(time, {'encoded' => '%23hash', 'another_encoded' => '%23another_hash'})
     end
 
-    emits = d.emits
-    emits << d.emits.flatten
-    assert_equal 2, emits.size
-    assert_equal 'decoded.message', emits[0][0]
-    assert_equal time,  emits[0][1]
-    assert_equal '#hash', emits[0][2]['encoded']
-    assert_equal '#another_hash', emits[0][2]['another_encoded']
+    events = d.events
+    events << d.events.flatten
+    assert_equal 2, events.size
+    assert_equal 'decoded.message', events[0][0]
+    assert_equal time,  events[0][1]
+    assert_equal '#hash', events[0][2]['encoded']
+    assert_equal '#another_hash', events[0][2]['another_encoded']
 
-    assert_equal 'decoded.message', emits[1][0]
-    assert_equal time,  emits[1][1]
-    assert_equal '#hash', emits[1][2]['encoded']
-    assert_equal '#another_hash', emits[1][2]['another_encoded']
+    assert_equal 'decoded.message', events[1][0]
+    assert_equal time,  events[1][1]
+    assert_equal '#hash', events[1][2]['encoded']
+    assert_equal '#another_hash', events[1][2]['another_encoded']
   end
 end
