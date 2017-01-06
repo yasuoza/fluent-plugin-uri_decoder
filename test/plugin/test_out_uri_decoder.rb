@@ -26,8 +26,8 @@ class Fluent::URIDecorderTest < Test::Unit::TestCase
     Fluent::Test.setup
   end
 
-  def create_driver(conf=CONFIG0, tag='test')
-    Fluent::Test::OutputTestDriver.new(Fluent::URIDecoder, tag).configure(conf)
+  def create_driver(conf=CONFIG0)
+    Fluent::Test::Driver::Output.new(Fluent::URIDecoder).configure(conf)
   end
 
   def test_configure
@@ -55,12 +55,12 @@ class Fluent::URIDecorderTest < Test::Unit::TestCase
 
   def test_emit_with_tag_specification
     d = create_driver(CONFIG0)
-    time = Time.now.to_i
-    d.run do
-      d.emit({'encoded' => '%23hash', 'value' => 1}, time)
+    time = event_time
+    d.run(default_tag: 'test') do
+      d.feed(time, {'encoded' => '%23hash', 'value' => 1})
     end
 
-    emits = d.emits
+    emits = d.events
     assert_equal 1, emits.size
     assert_equal 'decoded', emits[0][0]
     assert_equal time,  emits[0][1]
@@ -68,13 +68,13 @@ class Fluent::URIDecorderTest < Test::Unit::TestCase
   end
 
   def test_emit_with_prefix_specification
-    d = create_driver(CONFIG1, 'encoded.message')
-    time = Time.now.to_i
-    d.run do
-      d.emit({'encoded' => '%23hash', 'value' => 1}, time)
+    d = create_driver(CONFIG1)
+    time = event_time
+    d.run(default_tag: 'encoded.message') do
+      d.feed(time, {'encoded' => '%23hash', 'value' => 1})
     end
 
-    emits = d.emits
+    emits = d.events
     assert_equal 1, emits.size
     assert_equal 'decoded.message', emits[0][0]
     assert_equal time,  emits[0][1]
@@ -82,13 +82,13 @@ class Fluent::URIDecorderTest < Test::Unit::TestCase
   end
 
   def test_emit_with_multi_key_names
-    d = create_driver(CONFIG2, 'encoded.message')
-    time = Time.now.to_i
-    d.run do
-      d.emit({'encoded' => '%23hash', 'another_encoded' => '%23another_hash'}, time)
+    d = create_driver(CONFIG2)
+    time = event_time
+    d.run(default_tag: 'encoded.message') do
+      d.feed(time, {'encoded' => '%23hash', 'another_encoded' => '%23another_hash'})
     end
 
-    emits = d.emits
+    emits = d.events
     assert_equal 1, emits.size
     assert_equal 'decoded.message', emits[0][0]
     assert_equal time,  emits[0][1]
@@ -97,14 +97,14 @@ class Fluent::URIDecorderTest < Test::Unit::TestCase
   end
 
   def test_multiple_emit
-    d = create_driver(CONFIG2, 'encoded.message')
-    time = Time.now.to_i
-    d.run do
-      d.emit({'encoded' => '%23hash', 'another_encoded' => '%23another_hash'}, time)
+    d = create_driver(CONFIG2)
+    time = event_time
+    d.run(default_tag: 'encoded.message') do
+      d.feed(time, {'encoded' => '%23hash', 'another_encoded' => '%23another_hash'})
     end
 
-    emits = d.emits
-    emits << d.emits.flatten
+    emits = d.events
+    emits << d.events.flatten
     assert_equal 2, emits.size
     assert_equal 'decoded.message', emits[0][0]
     assert_equal time,  emits[0][1]

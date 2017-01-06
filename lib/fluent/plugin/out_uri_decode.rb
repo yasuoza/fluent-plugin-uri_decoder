@@ -1,16 +1,16 @@
-class Fluent::URIDecoder < Fluent::Output
+require 'fluent/plugin/output'
+require 'uri'
+
+class Fluent::URIDecoder < Fluent::Plugin::Output
   Fluent::Plugin.register_output('uri_decode', self)
+
+  helpers :event_emitter
 
   config_param :tag, :string, :default => nil
   config_param :remove_prefix, :string, :default => nil
   config_param :add_prefix, :string, :default => nil
   config_param :key_name, :string, :default => nil
   config_param :key_names, :string, :default => ''
-
-  def initialize
-    super
-    require 'uri'
-  end
 
   def configure(conf)
     super
@@ -50,7 +50,7 @@ class Fluent::URIDecoder < Fluent::Output
     end
   end
 
-  def emit(tag, es, chain)
+  def process(tag, es)
     tag = tag_mangle(tag)
 
     @_key_names ||= @key_names.split(/,\s*/)
@@ -64,7 +64,5 @@ class Fluent::URIDecoder < Fluent::Output
 
       router.emit(tag, time, record)
     end
-
-    chain.next
   end
 end
