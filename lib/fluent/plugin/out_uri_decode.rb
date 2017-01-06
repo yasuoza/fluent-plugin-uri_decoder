@@ -6,11 +6,11 @@ class Fluent::URIDecoderOutput < Fluent::Plugin::Output
 
   helpers :event_emitter
 
-  config_param :tag, :string, :default => nil
-  config_param :remove_prefix, :string, :default => nil
-  config_param :add_prefix, :string, :default => nil
-  config_param :key_name, :string, :default => nil
-  config_param :key_names, :array, :default => []
+  config_param :tag, :string, default: nil
+  config_param :remove_prefix, :string, default: nil
+  config_param :add_prefix, :string, default: nil
+  config_param :key_name, :string, default: nil
+  config_param :key_names, :array, default: []
 
   def configure(conf)
     super
