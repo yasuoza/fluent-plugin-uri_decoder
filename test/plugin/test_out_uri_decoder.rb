@@ -27,7 +27,7 @@ class Fluent::URIDecorderOutputTest < Test::Unit::TestCase
   end
 
   def create_driver(conf=CONFIG0)
-    Fluent::Test::Driver::Output.new(Fluent::URIDecoderOutput).configure(conf)
+    Fluent::Test::Driver::Output.new(Fluent::Plugin::URIDecoderOutput).configure(conf)
   end
 
   def test_configure
