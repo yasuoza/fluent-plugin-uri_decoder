@@ -60,11 +60,11 @@ class Fluent::URIDecoderOutputTest < Test::Unit::TestCase
       d.feed(time, {'encoded' => '%23hash', 'value' => 1})
     end
 
-    emits = d.events
-    assert_equal 1, emits.size
-    assert_equal 'decoded', emits[0][0]
-    assert_equal time,  emits[0][1]
-    assert_equal '#hash', emits[0][2]['encoded']
+    events = d.events
+    assert_equal 1, events.size
+    assert_equal 'decoded', events[0][0]
+    assert_equal time,  events[0][1]
+    assert_equal '#hash', events[0][2]['encoded']
   end
 
   def test_emit_with_prefix_specification
@@ -74,11 +74,11 @@ class Fluent::URIDecoderOutputTest < Test::Unit::TestCase
       d.feed(time, {'encoded' => '%23hash', 'value' => 1})
     end
 
-    emits = d.events
-    assert_equal 1, emits.size
-    assert_equal 'decoded.message', emits[0][0]
-    assert_equal time,  emits[0][1]
-    assert_equal '#hash', emits[0][2]['encoded']
+    events = d.events
+    assert_equal 1, events.size
+    assert_equal 'decoded.message', events[0][0]
+    assert_equal time,  events[0][1]
+    assert_equal '#hash', events[0][2]['encoded']
   end
 
   def test_emit_with_multi_key_names
@@ -88,12 +88,12 @@ class Fluent::URIDecoderOutputTest < Test::Unit::TestCase
       d.feed(time, {'encoded' => '%23hash', 'another_encoded' => '%23another_hash'})
     end
 
-    emits = d.events
-    assert_equal 1, emits.size
-    assert_equal 'decoded.message', emits[0][0]
-    assert_equal time,  emits[0][1]
-    assert_equal '#hash', emits[0][2]['encoded']
-    assert_equal '#another_hash', emits[0][2]['another_encoded']
+    events = d.events
+    assert_equal 1, events.size
+    assert_equal 'decoded.message', events[0][0]
+    assert_equal time,  events[0][1]
+    assert_equal '#hash', events[0][2]['encoded']
+    assert_equal '#another_hash', events[0][2]['another_encoded']
   end
 
   def test_multiple_emit
@@ -103,17 +103,17 @@ class Fluent::URIDecoderOutputTest < Test::Unit::TestCase
       d.feed(time, {'encoded' => '%23hash', 'another_encoded' => '%23another_hash'})
     end
 
-    emits = d.events
-    emits << d.events.flatten
-    assert_equal 2, emits.size
-    assert_equal 'decoded.message', emits[0][0]
-    assert_equal time,  emits[0][1]
-    assert_equal '#hash', emits[0][2]['encoded']
-    assert_equal '#another_hash', emits[0][2]['another_encoded']
+    events = d.events
+    events << d.events.flatten
+    assert_equal 2, events.size
+    assert_equal 'decoded.message', events[0][0]
+    assert_equal time,  events[0][1]
+    assert_equal '#hash', events[0][2]['encoded']
+    assert_equal '#another_hash', events[0][2]['another_encoded']
 
-    assert_equal 'decoded.message', emits[1][0]
-    assert_equal time,  emits[1][1]
-    assert_equal '#hash', emits[1][2]['encoded']
-    assert_equal '#another_hash', emits[1][2]['another_encoded']
+    assert_equal 'decoded.message', events[1][0]
+    assert_equal time,  events[1][1]
+    assert_equal '#hash', events[1][2]['encoded']
+    assert_equal '#another_hash', events[1][2]['another_encoded']
   end
 end
