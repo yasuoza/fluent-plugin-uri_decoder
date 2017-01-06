@@ -22,7 +22,7 @@ Specify decode target with `key_name`:
 
 ```
 <match input.**>
-  type uri_decode
+  @type uri_decode
   key_name query_param
   remove_prefix input
   add_prefix decoded
@@ -35,7 +35,7 @@ If you have multiple decode target, use `key_names` with comma separated:
 
 ```
 <match input.**>
-  type uri_decode
+  @type uri_decode
   key_names first_query_param, second_query_param
   remove_prefix input
   add_prefix decoded
